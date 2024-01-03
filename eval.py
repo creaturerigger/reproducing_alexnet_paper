@@ -24,9 +24,7 @@ parser.add_argument("-ch", "--checkpoint-path", type=str,
 
 args = parser.parse_args()
 
-dataset_path = args.test_dataset_path
-batch_size = args.batch_size
-checkpoint_path = args.checkpoint_path
+
 
 
 
@@ -36,6 +34,10 @@ def eval(rank, world_size):
                             rank=rank,
                             world_size=world_size)
     
+
+    dataset_path = args.test_dataset_path
+    batch_size = args.batch_size
+    checkpoint_path = args.checkpoint_path
     test_transform = torch_transforms.Compose([
         torch_transforms.Resize(227),
         torch_transforms.CenterCrop(227)
@@ -45,10 +47,10 @@ def eval(rank, world_size):
                                 f'{dataset_path}/Labels.json',
                                 transform=test_transform,
                                 split='val')
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     
     test_model = AlexNet()
-    loaded_dict = torch.load(checkpoint_path, map_location=rank)
+    loaded_dict = torch.load(checkpoint_path, map_location=torch.device(rank))
     test_model.load_state_dict(loaded_dict['state_dict'])
 
     test_model.to(rank)
@@ -63,6 +65,7 @@ def eval(rank, world_size):
 
     for images, labels in tqdm(test_loader):
         outputs = test_model(images.float().to(rank))
+        labels = labels.to(rank)
         _, predicted = torch.max(outputs, 1)
         correct1 += (predicted == labels).type(torch.float).sum().item()
         

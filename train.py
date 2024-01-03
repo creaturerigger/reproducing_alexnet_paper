@@ -50,26 +50,11 @@ args = parser.parse_args()
 
 
 
-num_epochs = args.epochs
-learning_rate = float(args.learning_rate)
-number_of_classes = args.number_of_classes
-model = AlexNet(num_classes=number_of_classes)
 
-if args.optimizer == "adam":
-    optimizer = torch.optim.Adam(model.parameters, lr=learning_rate)
-elif args.optimizer == "adamw":
-    optimizer = torch.optim.AdamW(model.parameters, lr=learning_rate)
-elif args.optimizer == "sgd":
-    optimizer = torch.optim.SGD(model.parameters, lr=learning_rate)
-elif args.optimizer == "rmsprop":
-    optimizer = torch.optim.RMSprop(model.parameters(), lr=learning_rate)
 
-train_batch_size = args.train_batch_size
-val_batch_size = args.validation_batch_size
-dataset_path = args.dataset_path
-val_size = args.validation_size
-json_label_file = args.json_label_file
-checkpoint_path = args.checkpoint_path
+
+
+
 
 
 def train(rank, world_size):
@@ -78,9 +63,32 @@ def train(rank, world_size):
                             rank=rank,
                             world_size=world_size)
     
+
+    num_epochs = args.epochs
+    learning_rate = float(args.learning_rate)
+    number_of_classes = args.number_of_classes
+
+
+    train_batch_size = args.train_batch_size
+    val_batch_size = args.validation_batch_size
+    dataset_path = args.dataset_path
+    val_size = args.validation_size
+    json_label_file = args.json_label_file
+    checkpoint_path = args.checkpoint_path
     
+    model = AlexNet(num_classes=number_of_classes)
+
+    if args.optimizer == "adam":
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    elif args.optimizer == "adamw":
+        optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+    elif args.optimizer == "sgd":
+        optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+    elif args.optimizer == "rmsprop":
+        optimizer = torch.optim.RMSprop(model.parameters(), lr=learning_rate)
+
     model.to(rank)    
-    model = DDP(model, device_ids=[rank])
+    ddp_model = DDP(model, device_ids=[rank])
     
     criterion = torch.nn.CrossEntropyLoss()
     lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer,
@@ -115,7 +123,7 @@ def train(rank, world_size):
     start_time = time()
 
     for epoch in range(num_epochs):
-        model.train()
+        ddp_model.train()
         epoch_train_loss = 0.0
         epoch_val_loss = 0.0
 
@@ -127,7 +135,7 @@ def train(rank, world_size):
             tqdm_train_loader.set_description(f'Epoch (train) {epoch + 1}/{num_epochs}')
             with torch.cuda.amp.autocast():
                 image_batch, labels = image_batch.float().to(rank), labels.to(rank)
-                outputs = model(image_batch)
+                outputs = ddp_model(image_batch)
                 loss = criterion(outputs, labels)
 
             scaler.scale(loss).backward()
@@ -140,12 +148,12 @@ def train(rank, world_size):
 
         with torch.no_grad():
             tqdm_val_loader.set_description(f'Epoch (val) {epoch + 1}/{num_epochs}')
-            model.eval()
+            ddp_model.eval()
             for image_batch, labels in tqdm_val_loader:
                 with torch.cuda.amp.autocast():
                     image_batch, labels = image_batch.float().to(rank), labels.to(rank)
 
-                    outputs = model(image_batch)
+                    outputs = ddp_model(image_batch)
                     loss = criterion(outputs, labels)
                     epoch_val_loss += loss.item()
                 val_num_of_correct_preds += (outputs.argmax(1) == labels).type(torch.float).sum().item()
@@ -168,7 +176,7 @@ def train(rank, world_size):
         print(f'Val loss: {avg_val_loss:.4f}, Val acc: {val_acc:.4f}')
 
         if (epoch + 1) % 10 == 0:            
-            history['state_dict'] = model.module.state_dict()
+            history['state_dict'] = ddp_model.module.state_dict()
             history['optimizer_state_dict'] = optimizer.state_dict()
             history['lr_scheduler_state_dict'] = lr_scheduler.state_dict()
             history['scaler_state_dict'] = scaler.state_dict()
@@ -180,10 +188,10 @@ def train(rank, world_size):
 def main():
     world_size = torch.cuda.device_count()
     mp.spawn(train,
-             args=(world_size,),
-             nprocs=world_size,
-             join=True)
-    
+        args=(world_size,),
+        nprocs=world_size,
+        join=True)
+
 
 if __name__ == "__main__":
     os.environ["MASTER_ADDR"] = "localhost"

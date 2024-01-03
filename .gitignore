@@ -10,3 +10,7 @@ venv.bak/
 # Dataset
 dataset
 dataset/
+
+# Artifacts
+model_artifacts
+model_artifacts/
