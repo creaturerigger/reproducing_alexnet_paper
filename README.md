@@ -1,6 +1,6 @@
 # Reproducing AlexNet Paper
 
-This repository is the official implementation of Reproducing AlexNet Paper as the final project of ARI5004 Deep Learning course.
+This repository is the official implementation of Reproducing AlexNet Paper as the final project of ARI5004 Deep Learning course. In this study the [ImageNet100](https://www.kaggle.com/datasets/ambityga/imagenet100) dataset has been used.
 
 ## Environment
 
