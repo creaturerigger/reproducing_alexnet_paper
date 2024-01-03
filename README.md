@@ -50,6 +50,14 @@ To train the AlexNet model in the paper, run the following command:
 python train.py -tb <train-batch-size> -vb <validation-batch-size> -op <optimizer> -dp <dataset-path> -lr <learning-rate> -e <number-of-epochs> -vs <validation-dataset-size> -j <json-label-file> -cp <checkpoint-path> -nc <number-of-classes>
 ```
 
+## Evaluating
+
+To evaluate the model run the following command:
+
+```eval
+python eval.py -td <test-dataset-path> -bs <test-batch-size> -ch <checkpoint-path>
+```
+
 ## Results
 
 Our model achieves the following performance:
