@@ -47,5 +47,13 @@ pip install -r requirements.txt
 To train the AlexNet model in the paper, run the following command:
 
 ```train
-python train.py --root-dir <path-to-dataset> --
+python train.py -tb <train-batch-size> -vb <validation-batch-size> -op <optimizer> -dp <dataset-path> -lr <learning-rate> -e <number-of-epochs> -vs <validation-dataset-size> -j <json-label-file> -cp <checkpoint-path> -nc <number-of-classes>
 ```
+
+## Results
+
+Our model achieves the following performance:
+
+| AlexNet            | Top 1 Accuracy  | Top 5 Accuracy |
+| ------------------ |---------------- | -------------- |
+| AlexNet            |     3.36%       |      14.34%    |
