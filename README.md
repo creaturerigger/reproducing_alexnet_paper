@@ -74,6 +74,45 @@ python eval.py --help
 
 Our model achieves the following performance:
 
-| AlexNet            | Top 1 Accuracy  | Top 5 Accuracy |
+| AlexNet            | Top-1 Accuracy  | Top-5 Accuracy |
 | ------------------ |---------------- | -------------- |
 | AlexNet            |     3.36%       |      14.34%    |
+
+
+## Contributing Guidelines
+
+We welcome contributions to this project! To ensure a smooth contribution process, please follow these guidelines:
+
+**Areas of Contribution:**
+
+* Bug fixes and improvements to the codebase
+* New features related to the paper or model
+* Documentation improvements and tutorials
+* Unit tests and code coverage enhancements
+* Sharing experimental results and analyses
+
+**Contribution Workflow:**
+
+1. Fork this repository and create a new branch for your changes.
+2. Implement your changes and update the relevant documentation.
+3. Run unit tests and ensure your code adheres to the project's style guide.
+4. Create a pull request and clearly describe your changes.
+5. Be prepared to address any feedback or suggestions from the maintainers.
+
+**Additional Notes:**
+
+* Please adhere to the PEP 8 coding style guide.
+* Include unit tests for any new code you add.
+* Use descriptive commit messages and pull request titles.
+* We appreciate contributions in any form, even if they are small bug fixes or suggestions.
+
+Thank you for your interest in contributing!
+
+For citation you can use the following BiBTex
+@misc{alexnet_reproduction,
+  author = "Anwar Abuelrub, and Volkan Bakir",
+  title = "Reproducing AlexNet Paper: Final Project for ARI5004 Deep Learning Course",
+  year = "2024",
+  howpublished = "\url{https://github.com/creaturerigger/reproducing_alexnet_paper}",
+  note = "Implements the AlexNet model from the {ImageNet Classification with Deep Convolutional Neural Networks} paper on the ImageNet100 dataset. Includes training, evaluation, and performance analysis scripts."
+}
