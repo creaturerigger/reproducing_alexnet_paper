@@ -108,7 +108,9 @@ We welcome contributions to this project! To ensure a smooth contribution proces
 
 Thank you for your interest in contributing!
 
-For citation you can use the following BiBTex
+For citation you can use the following BibTeX
+
+```BibTeX
 @misc{alexnet_reproduction,
   author = "Anwar Abuelrub, and Volkan Bakir",
   title = "Reproducing AlexNet Paper: Final Project for ARI5004 Deep Learning Course",
@@ -116,3 +118,4 @@ For citation you can use the following BiBTex
   howpublished = "\url{https://github.com/creaturerigger/reproducing_alexnet_paper}",
   note = "Implements the AlexNet model from the {ImageNet Classification with Deep Convolutional Neural Networks} paper on the ImageNet100 dataset. Includes training, evaluation, and performance analysis scripts."
 }
+```
