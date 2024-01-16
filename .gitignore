@@ -14,3 +14,9 @@ dataset/
 # Artifacts
 model_artifacts
 model_artifacts/
+
+# cache
+__pycache__/
+__pycache__
+AlexNet/__pycache__/
+AlexNet/__pycache__
